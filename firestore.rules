@@ -1,0 +1,115 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && (
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        (exists(/databases/$(database)/documents/staff/$(request.auth.uid)) && 
+         get(/databases/$(database)/documents/staff/$(request.auth.uid)).data.roleId == 'admin') ||
+        (request.auth.token.email != null && (request.auth.token.email.matches('.*admin.*') || request.auth.token.email == 'lythanhsanggg@gmail.com'))
+      );
+    }
+
+    // Admins registry
+    match /admins/{uid} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // Staff collection (Users & permissions)
+    match /staff/{staffId} {
+      allow read: if isSignedIn();
+      
+      // Only Admin can create new staff or invite
+      allow create: if isAdmin() || (isSignedIn() && request.auth.uid == staffId && incoming().roleId != 'admin');
+      
+      // Admin can update all fields; non-admin can only update their own non-sensitive profile info
+      allow update: if isAdmin() || (
+        isSignedIn() && 
+        (request.auth.uid == staffId || (existing().email != null && existing().email == request.auth.token.email)) &&
+        !incoming().diff(existing()).affectedKeys().hasAny(['roleId', 'role', 'permissions', 'status'])
+      );
+      
+      // Only Admin can delete staff
+      allow delete: if isAdmin();
+    }
+
+    // Clients collection
+    match /clients/{clientId} {
+      allow read: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // Legal cases collection: allow exact ID lookup by client; listing requires signed-in staff
+    match /cases/{caseId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create, update: if isSignedIn();
+      allow delete: if isAdmin();
+    }
+
+    // Tasks collection
+    match /tasks/{taskId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Documents collection: allow exact get by documentId for client download; list requires signed in
+    match /documents/{documentId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Case Timelines collection
+    match /timelines/{timelineId} {
+      allow get: if true;
+      allow list: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Internal Notes collection
+    match /notes/{noteId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSignedIn();
+    }
+
+    // Audit logs: Append-only, cannot be modified or deleted
+    match /auditLogs/{logId} {
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    // System Settings: Read by all authenticated users, modified only by Admin
+    match /settings/{settingId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+  }
+}

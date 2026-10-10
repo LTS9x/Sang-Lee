@@ -1,0 +1,233 @@
+{
+  "entities": {
+    "StaffMember": {
+      "title": "StaffMember",
+      "description": "Thành viên nhân sự và luật sư trong công ty luật Bigboss Law",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "role": { "type": "string" },
+        "roleId": { "type": "string", "enum": ["admin", "partner_lawyer", "associate_lawyer", "paralegal", "accountant"] },
+        "department": { "type": "string" },
+        "activeCases": { "type": "number" },
+        "initials": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "status": { "type": "string", "enum": ["active", "suspended"] },
+        "permissions": { "type": "array" },
+        "avatarColor": { "type": "string" },
+        "lawyerCardNumber": { "type": "string" },
+        "maxCaseloadQuota": { "type": "number" },
+        "specializations": { "type": "array" },
+        "joinedDate": { "type": "string" },
+        "lastLogin": { "type": "string" },
+        "kpiSuccessRate": { "type": "number" },
+        "mustChangePassword": { "type": "boolean" },
+        "authUid": { "type": "string" }
+      },
+      "required": ["id", "name", "role", "roleId", "email", "status", "permissions"]
+    },
+    "Client": {
+      "title": "Client",
+      "description": "Thông tin khách hàng cá nhân hoặc doanh nghiệp",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["Cá nhân", "Doanh nghiệp"] },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "idCardOrTax": { "type": "string" },
+        "address": { "type": "string" },
+        "representative": { "type": "string" },
+        "note": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "casesCount": { "type": "number" }
+      },
+      "required": ["id", "name", "type", "phone", "email", "idCardOrTax", "address", "createdAt"]
+    },
+    "LegalCase": {
+      "title": "LegalCase",
+      "description": "Hồ sơ vụ việc pháp lý được quản lý tại Bigboss Law",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "clientId": { "type": "string" },
+        "clientName": { "type": "string" },
+        "category": { "type": "string" },
+        "status": { "type": "string" },
+        "priority": { "type": "string" },
+        "progress": { "type": "number" },
+        "leadLawyer": { "type": "string" },
+        "assistants": { "type": "array" },
+        "receivedDate": { "type": "string" },
+        "nextDeadline": { "type": "string" },
+        "courtAgency": { "type": "string" },
+        "disputedAmount": { "type": "string" },
+        "summary": { "type": "string" },
+        "target": { "type": "string" },
+        "stageProgress": { "type": "object" },
+        "billing": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "title", "clientId", "clientName", "category", "status", "priority", "leadLawyer", "createdAt"]
+    },
+    "TaskItem": {
+      "title": "TaskItem",
+      "description": "Nhiệm vụ xử lý vụ việc được phân công cho nhân sự",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "caseId": { "type": "string" },
+        "caseTitle": { "type": "string" },
+        "assignee": { "type": "string" },
+        "deadline": { "type": "string" },
+        "priority": { "type": "string" },
+        "completed": { "type": "boolean" },
+        "category": { "type": "string" }
+      },
+      "required": ["id", "title", "caseId", "assignee", "deadline", "priority", "completed"]
+    },
+    "DocumentItem": {
+      "title": "DocumentItem",
+      "description": "Tài liệu và chứng cứ đính kèm hồ sơ pháp lý",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "fileType": { "type": "string" },
+        "category": { "type": "string" },
+        "caseId": { "type": "string" },
+        "caseTitle": { "type": "string" },
+        "clientId": { "type": "string" },
+        "clientName": { "type": "string" },
+        "uploadedBy": { "type": "string" },
+        "uploadDate": { "type": "string" },
+        "fileSize": { "type": "string" },
+        "fileUrl": { "type": "string" },
+        "mimeType": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "required": ["id", "name", "fileType", "category", "uploadedBy", "uploadDate", "fileSize"]
+    },
+    "CaseTimeline": {
+      "title": "CaseTimeline",
+      "description": "Mốc thời gian tiến độ giải quyết vụ việc",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "date": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "actor": { "type": "string" },
+        "type": { "type": "string" }
+      },
+      "required": ["id", "caseId", "date", "title", "description", "actor", "type"]
+    },
+    "InternalNote": {
+      "title": "InternalNote",
+      "description": "Ghi chú chiến lược nội bộ cho hồ sơ vụ việc",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "caseId": { "type": "string" },
+        "author": { "type": "string" },
+        "date": { "type": "string" },
+        "content": { "type": "string" },
+        "isConfidential": { "type": "boolean" }
+      },
+      "required": ["id", "caseId", "author", "date", "content"]
+    },
+    "AuditLogItem": {
+      "title": "AuditLogItem",
+      "description": "Nhật ký kiểm toán an ninh và truy vết thao tác",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "actorName": { "type": "string" },
+        "actorRole": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "target": { "type": "string" },
+        "ipAddress": { "type": "string" }
+      },
+      "required": ["id", "timestamp", "actorName", "actorRole", "action", "details"]
+    },
+    "SystemSettings": {
+      "title": "SystemSettings",
+      "description": "Cấu hình chung và thông tin định danh của hãng luật Bigboss Law",
+      "type": "object",
+      "properties": {
+        "firmName": { "type": "string" },
+        "firmEnglishName": { "type": "string" },
+        "licenseNumber": { "type": "string" },
+        "taxId": { "type": "string" },
+        "barAssociation": { "type": "string" },
+        "address": { "type": "string" },
+        "branchAddress": { "type": "string" },
+        "representative": { "type": "string" },
+        "hotline": { "type": "string" },
+        "email": { "type": "string" },
+        "bankAccount": { "type": "string" },
+        "bankName": { "type": "string" },
+        "modules": { "type": "object" },
+        "security": { "type": "object" }
+      },
+      "required": ["firmName", "licenseNumber", "taxId", "address", "representative", "hotline", "email"]
+    }
+  },
+  "firestore": {
+    "/staff/{staffId}": {
+      "schema": { "$ref": "#/entities/StaffMember" },
+      "description": "Danh sách nhân sự và luật sư công ty, bao gồm phân quyền và trạng thái"
+    },
+    "/admins/{uid}": {
+      "schema": {
+        "type": "object",
+        "properties": {
+          "email": { "type": "string" },
+          "role": { "type": "string" }
+        },
+        "required": ["email", "role"]
+      },
+      "description": "Tài liệu xác thực quyền Admin tối cao"
+    },
+    "/clients/{clientId}": {
+      "schema": { "$ref": "#/entities/Client" },
+      "description": "Khách hàng cá nhân và doanh nghiệp"
+    },
+    "/cases/{caseId}": {
+      "schema": { "$ref": "#/entities/LegalCase" },
+      "description": "Hồ sơ vụ việc pháp lý đang xử lý hoặc lưu trữ"
+    },
+    "/tasks/{taskId}": {
+      "schema": { "$ref": "#/entities/TaskItem" },
+      "description": "Nhiệm vụ được phân công trong các vụ việc"
+    },
+    "/documents/{documentId}": {
+      "schema": { "$ref": "#/entities/DocumentItem" },
+      "description": "Tài liệu và chứng cứ lưu trữ gắn với hồ sơ hoặc khách hàng"
+    },
+    "/timelines/{timelineId}": {
+      "schema": { "$ref": "#/entities/CaseTimeline" },
+      "description": "Nhật ký tiến trình và các mốc tố tụng của vụ việc"
+    },
+    "/notes/{noteId}": {
+      "schema": { "$ref": "#/entities/InternalNote" },
+      "description": "Ghi chú chiến lược nội bộ của vụ việc"
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLogItem" },
+      "description": "Nhật ký lưu vết thao tác người dùng"
+    },
+    "/settings/{settingId}": {
+      "schema": { "$ref": "#/entities/SystemSettings" },
+      "description": "Cấu hình hệ thống hãng luật Bigboss Law"
+    }
+  }
+}

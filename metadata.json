@@ -1,0 +1,6 @@
+{
+  "name": "BIGBOSS LAW CRM - Quản lý Hồ sơ & Khách hàng",
+  "description": "Hệ thống quản lý khách hàng, hồ sơ vụ việc pháp lý và tài liệu chuyên nghiệp cho công ty Luật.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
